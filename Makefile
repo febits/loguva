@@ -26,5 +26,15 @@ $(SAMPLE): $(SRCSAMPLE)
 run_samples:
 	LD_LIBRARY_PATH=$(BUILDDIR) $(SAMPLE)
 
+install: $(LIB)
+	cp $(LIB) $(INSTALLDIR)
+	cp include/loguva.h /usr/include/
+	cp include/types.h /usr/include/
+
+uninstall:
+	rm $(INSTALLDIR)/libloguva.so
+	rm /usr/include/loguva.h
+	rm /usr/include/types.h
+
 clean:
 	rm -rf $(BUILDDIR) $(SAMPLE)
