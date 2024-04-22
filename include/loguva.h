@@ -12,7 +12,7 @@
 enum log_levels { DEBUG, INFO, WARNING, ERROR, FATAL };
 
 bool loguva_add_stream(FILE *stream);
-bool loguva_add_file(const char *path);
+FILE *loguva_add_file(const char *path);
 bool loguva_log(enum log_levels lv, const char *path, u64 line, const char *fmt,
                 ...);
 

@@ -34,18 +34,18 @@ bool loguva_add_stream(FILE *stream) {
   return false;
 }
 
-bool loguva_add_file(const char *path) {
+FILE *loguva_add_file(const char *path) {
   if (streams_size < MAX_STREAMS) {
     FILE *stream = fopen(path, "a");
     if (stream == NULL)
-      return false;
+      return NULL;
 
     streams[streams_size++] = stream;
 
-    return true;
+    return stream;
   }
 
-  return false;
+  return NULL;
 }
 
 bool loguva_log(enum log_levels lv, const char *path, u64 line, const char *fmt,

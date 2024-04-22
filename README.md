@@ -33,7 +33,7 @@ Basically, the loguva allows adding up to 20 instances of `FILE *` by calling on
 
 ```c
 bool loguva_add_stream(FILE *stream);
-bool loguva_add_file(const char *path);
+FILE *loguva_add_file(const char *path);
 ```
 
 Once you call the macro below passing the log level and the message, you are logging:
