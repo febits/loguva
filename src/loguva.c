@@ -54,38 +54,34 @@ bool loguva_log(enum log_levels lv, const char *path, u64 line, const char *fmt,
     char timebuff[MAX_STRFTIME + 1] = {0};
     timebuff[gettime(timebuff)] = '\0';
 
-    struct style s = {DEFAULT(FG), DEFAULT(BG), 0};
-
     if (fileno(streams[i]) == STDOUT_FILENO) {
       fprintf(streams[i], "[%s] ", timebuff);
 
       switch (lv) {
         case DEBUG:
-          s.foreground = MAGENTA;
-          fprintfc(streams[i], &s, "[%s]%-3s", log_levels_str[lv], " ");
+          fprintfc(streams[i], STYLE_C(MAGENTA, _DC(BG), 0), "[%s]%-3s",
+                   log_levels_str[lv], " ");
           break;
         case INFO:
-          s.foreground = GREEN;
-          fprintfc(streams[i], &s, "[%s]%-4s", log_levels_str[lv], " ");
+          fprintfc(streams[i], STYLE_C(GREEN, _DC(BG), 0), "[%s]%-4s",
+                   log_levels_str[lv], " ");
           break;
         case WARNING:
-          s.foreground = YELLOW;
-          fprintfc(streams[i], &s, "[%s]%-1s", log_levels_str[lv], " ");
+          fprintfc(streams[i], STYLE_C(YELLOW, _DC(BG), 0), "[%s]%-1s",
+                   log_levels_str[lv], " ");
           break;
         case ERROR:
-          s.foreground = BRIGHT_RED;
-          fprintfc(streams[i], &s, "[%s]%-3s", log_levels_str[lv], " ");
+          fprintfc(streams[i], STYLE_C(BRIGHT_RED, _DC(BG), 0), "[%s]%-3s",
+                   log_levels_str[lv], " ");
           break;
         case FATAL:
-          s.foreground = RED;
-          s.effects = BOLD;
-          fprintfc(streams[i], &s, "[%s]%-3s", log_levels_str[lv], " ");
+          fprintfc(streams[i], STYLE_C(RED, _DC(BG), BOLD), "[%s]%-3s",
+                   log_levels_str[lv], " ");
           break;
       }
 
-      s.foreground = WHITE;
-      s.effects = DIM;
-      fprintfc(streams[i], &s, "%s:%lu > ", path, line);
+      fprintfc(streams[i], STYLE_C(WHITE, _DC(BG), DIM), "%s:%lu > ", path,
+               line);
 
       va_list args;
       va_start(args, fmt);
