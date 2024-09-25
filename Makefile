@@ -1,40 +1,41 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -pedantic
+CFLAGS=-Wall -Wextra -pedantic -I./include/
 LDFLAGS=-L./build/ -lloguva
-CINCLUDE=-I./include/
-CFLAGS+=$(CINCLUDE)
 
 BUILDDIR=build
 INSTALLDIR=/usr/lib
+LIBHEADER=loguva.h
+LIBNAME=libloguva.so
 
 SRC=$(wildcard src/*.c)
-LIB=$(BUILDDIR)/libloguva.so
+LIB=$(BUILDDIR)/$(LIBNAME)
 
-SAMPLE=samples/sample
-SRCSAMPLE=samples/sample.c
+SRC_SAMPLE=$(wildcard samples/*.c)
+BIN_SAMPLE=$(BUILDDIR)/sample
 
-default: $(LIB)
-all: $(LIB) $(SAMPLE)
+.PHONY: all install uninstall clean samples
+
+all: always $(LIB) $(BIN_SAMPLE)
 
 $(LIB): $(SRC)
-	mkdir -p $(BUILDDIR)
 	$(CC) $(CFLAGS) -shared -fPIC $^ -o $@
 
-$(SAMPLE): $(SRCSAMPLE)
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+$(BIN_SAMPLE): $(SRC_SAMPLE)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 
-run_samples:
-	LD_LIBRARY_PATH=$(BUILDDIR) $(SAMPLE)
+samples:
+	LD_LIBRARY_PATH=$(BUILDDIR) $(BIN_SAMPLE)
+
+always:
+	mkdir -p $(BUILDDIR)
 
 install: $(LIB)
 	cp $(LIB) $(INSTALLDIR)
-	cp include/loguva.h /usr/include/
-	cp include/types.h /usr/include/
+	cp include/$(LIBHEADER) /usr/include/
 
 uninstall:
-	rm $(INSTALLDIR)/libloguva.so
-	rm /usr/include/loguva.h
-	rm /usr/include/types.h
+	rm $(INSTALLDIR)/$(LIBNAME)
+	rm /usr/include/$(LIBHEADER)
 
 clean:
-	rm -rf $(BUILDDIR) $(SAMPLE)
+	rm -rf $(BUILDDIR)
