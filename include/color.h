@@ -4,19 +4,13 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "types.h"
-
 #define ESC "\x1b"
 #define SEPARATOR "["
 #define TERMINATOR "m"
 #define RESET_VALUE "0"
 #define OFF ESC SEPARATOR RESET_VALUE TERMINATOR
 
-#define FGDEFAULT 39
-#define BGDEFAULT 49
-
-#define _DC(type) ((type) == FG ? FGDEFAULT : BGDEFAULT)
-#define STYLE_C(f, b, e) ((struct style){(f), (b), (e)})
+#define STYLE(f, b, e) ((struct style){(f), (b), (e)})
 
 #define BOLD (1 << 0)
 #define DIM (1 << 1)
@@ -26,8 +20,6 @@
 #define REVERSE (1 << 5)
 #define HIDDEN (1 << 6)
 #define CROSSOUT (1 << 7)
-
-enum default_type { FG, BG };
 
 enum colors {
   BLACK = 30,
@@ -49,15 +41,15 @@ enum colors {
 };
 
 typedef struct style {
-  u8 foreground;
-  u8 background;
-  u8 effects;
+  uint8_t foreground;
+  uint8_t background;
+  uint8_t effects;
 } Style;
 
-i32 printfc(struct style s, const char *fmt, ...)
+int printfc(struct style s, const char *fmt, ...)
     __attribute__((format(printf, 2, 3)));
 
-i32 fprintfc(FILE *stream, struct style s, const char *fmt, ...)
+int fprintfc(FILE *stream, struct style s, const char *fmt, ...)
     __attribute__((format(printf, 3, 4)));
 
 #endif

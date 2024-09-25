@@ -1,11 +1,15 @@
 #include <limits.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "color.h"
-#include "types.h"
 
+#define FGDEFAULT 39
+#define BGDEFAULT 49
 #define BGDIFF 10
+
 #define GETBIT(B, P) (((B) >> (P)) & 1)
 
 enum effects {
@@ -20,22 +24,25 @@ enum effects {
   _CROSSOUT, // \x1b[9m
 };
 
-static i32 apply_color(FILE *stream, struct style *s) {
-  i32 written_bytes = 0;
+static int apply_color(FILE *stream, struct style *s) {
+  int written_bytes = 0;
+
+  uint8_t fore = s->foreground == 0 ? FGDEFAULT : s->foreground;
+  uint8_t back = s->background == 0 ? BGDEFAULT : s->background + BGDIFF;
 
   written_bytes += fprintf(stream ? stream : stdout, 
-      ESC SEPARATOR "%u" TERMINATOR, s->foreground);
-  written_bytes += fprintf(stream ? stream : stdout, 
-      ESC SEPARATOR "%u" TERMINATOR, s->background + BGDIFF);
+      ESC SEPARATOR "%u" TERMINATOR, fore);
+  written_bytes += fprintf(stream ? stream : stdout,
+      ESC SEPARATOR "%u" TERMINATOR, back);
 
   return written_bytes;
 }
 
-static i32 apply_effects(FILE *stream, struct style *s) {
-  i32 written_bytes = 0;
+static int apply_effects(FILE *stream, struct style *s) {
+  int written_bytes = 0;
 
-  u64 totalbits = sizeof(s->effects) * CHAR_BIT;
-  for (u64 i = 0; i < totalbits; i++) {
+  size_t totalbits = sizeof(s->effects) * CHAR_BIT;
+  for (size_t i = 0; i < totalbits; i++) {
     if (GETBIT(s->effects, i)) {
       switch (i) {
         case _BOLD:
@@ -77,11 +84,12 @@ static i32 apply_effects(FILE *stream, struct style *s) {
   return written_bytes;
 }
 
-i32 printfc(struct style s, const char *fmt, ...) {
+int printfc(struct style s, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
-  i32 written_bytes = 0;
+  int written_bytes = 0;
+  written_bytes += printf(OFF);
   written_bytes += apply_color(NULL, &s);
   written_bytes += apply_effects(NULL, &s);
   written_bytes += vprintf(fmt, args);
@@ -91,11 +99,12 @@ i32 printfc(struct style s, const char *fmt, ...) {
   return written_bytes;
 }
 
-i32 fprintfc(FILE *stream, struct style s, const char *fmt, ...) {
+int fprintfc(FILE *stream, struct style s, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
 
-  i32 written_bytes = 0;
+  int written_bytes = 0;
+  written_bytes += fprintf(stream, OFF);
   written_bytes += apply_color(stream, &s);
   written_bytes += apply_effects(stream, &s);
   written_bytes += vfprintf(stream, fmt, args);
