@@ -1,6 +1,6 @@
 # Loguva
 
-Loguva (Log + [Uva](https://en.wikipedia.org/wiki/Grape)) is a library that aims to include a simple and lightweight interface for logs.
+Loguva (Log + [Uva](https://en.wikipedia.org/wiki/Grape)) is a library that provides a simple and lightweight interface for logging.
 
 Features:
 - Multiple log destinations.
@@ -18,12 +18,19 @@ cd loguva
 ```
 
 ```bash
-make all
+make
 ```
 
 ```bash
 sudo make install
 ```
+
+## Samples
+```bash
+make samples
+```
+
+![Loguva Print to STDOUT](https://imgur.com/USVkiUl.png)
 
 ## Usage
 
@@ -33,6 +40,8 @@ Basically, the loguva allows adding up to 20 instances of `FILE *` by calling on
 
 ```c
 bool loguva_add_stream(FILE *stream);
+```
+```c
 FILE *loguva_add_file(const char *path);
 ```
 
@@ -68,11 +77,3 @@ int main(void) {
 ```
 
 When you call `loguva()`, all instances of `FILE *` will be used to write the full log message. As you can see above, both `STDOUT` and `/tmp/loguva.log`.
-
-## Samples
-
-![Loguva Print from STDOUT](https://imgur.com/USVkiUl.png)
-
-```bash
-make run_samples
-```
