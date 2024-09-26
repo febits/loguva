@@ -77,3 +77,6 @@ int main(void) {
 ```
 
 When you call `loguva()`, all instances of `FILE *` will be used to write the full log message. As you can see above, both `STDOUT` and `/tmp/loguva.log`.
+
+## References
+- https://github.com/rxi/log.c
